@@ -78,7 +78,7 @@ Singleton {
             } else if (label === "on") {
                 Toaster.toast(qsTr("iPad Mode on"), qsTr("Weylus is ready on the virtual display"));
             } else if (label === "off") {
-                Toaster.toast(qsTr("iPad Mode off"), qsTr("Workspaces returned to the laptop"));
+                Toaster.toast(qsTr("iPad Mode off"), qsTr("Display layout kept in place"));
             }
             root.refresh();
         }

@@ -7,6 +7,11 @@ Off is one round power button. While active, the same slot separates into two
 clear actions: power on the left and Extend/Duplicate on the right. State is
 read back from Hyprland instead of being guessed by the UI.
 
+The power action is deliberately soft: it stops or starts Weylus while leaving
+the headless output in place, so Hyprland never shuffles workspaces just because
+streaming was toggled. Use `ipad-mode remove` when a true output teardown is
+wanted; that command safely returns the iPad workspaces to the laptop.
+
 ## Requires
 
 - Hyprland with headless-output support
