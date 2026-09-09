@@ -11,19 +11,17 @@ StyledRect {
 
     property bool fillWidth: true
     property bool shapeMorph: true
-    property real shapeMorphExpansion: shapeMorph && (powerLayer.pressed || modeLayer.pressed) ? 24 : 0
+    property real shapeMorphExpansion: 0
 
     implicitWidth: implicitHeight
     implicitHeight: powerIcon.implicitHeight + Tokens.padding.small * 2
     visible: IPad.IPadMode.available
     enabled: !IPad.IPadMode.busy
-    opacity: enabled ? 1 : 0.62
-    clip: true
 
     readonly property bool split: IPad.IPadMode.active
-    readonly property real powerWidth: split ? Math.round(width * 0.48) : width
-    readonly property color activeColour: Colours.palette.m3secondary
-    readonly property color activeOnColour: Colours.palette.m3onSecondary
+    readonly property real powerWidth: split ? Math.round(width / 2) : width
+    readonly property color activeColour: Colours.palette.m3primary
+    readonly property color activeOnColour: Colours.palette.m3onPrimary
     readonly property color inactiveColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
     readonly property color inactiveOnColour: Colours.palette.m3onSurfaceVariant
 
@@ -45,6 +43,10 @@ StyledRect {
 
             color: root.split ? root.activeOnColour : root.inactiveOnColour
             disabled: !root.enabled
+            rect.topLeftRadius: root.radius
+            rect.bottomLeftRadius: root.radius
+            rect.topRightRadius: root.split ? 0 : root.radius
+            rect.bottomRightRadius: root.split ? 0 : root.radius
             onClicked: IPad.IPadMode.togglePower()
         }
 
@@ -53,19 +55,10 @@ StyledRect {
 
             anchors.centerIn: parent
             anchors.verticalCenterOffset: 1
-            text: IPad.IPadMode.busy ? "progress_activity"
-                : root.split ? "power_settings_new" : "tablet_mac"
+            text: root.split ? "power_settings_new" : "tablet_mac"
             color: root.split ? root.activeOnColour : root.inactiveOnColour
             fill: root.split ? 1 : 0
             fontStyle: Tokens.font.icon.medium
-
-            RotationAnimator on rotation {
-                running: IPad.IPadMode.busy
-                from: 0
-                to: 360
-                duration: 900
-                loops: Animation.Infinite
-            }
         }
     }
 
@@ -73,38 +66,29 @@ StyledRect {
         id: modeAction
 
         visible: root.split
-        opacity: root.split ? 1 : 0
         anchors.left: powerAction.right
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-
-        // The barely-there tint separates the action without turning it into
-        // a second floating pill.
-        Rectangle {
-            anchors.fill: parent
-            color: root.activeOnColour
-            opacity: 0.065
-        }
 
         StateLayer {
             id: modeLayer
 
             color: root.activeOnColour
             disabled: !root.enabled
+            rect.topRightRadius: root.radius
+            rect.bottomRightRadius: root.radius
             onClicked: IPad.IPadMode.toggleMode()
         }
 
         MaterialIcon {
             anchors.centerIn: parent
             anchors.verticalCenterOffset: 1
-            text: IPad.IPadMode.mode === "duplicate" ? "content_copy" : "view_week"
+            text: IPad.IPadMode.mode === "duplicate" ? "content_copy" : "desktop_windows"
             color: root.activeOnColour
             fill: 1
             fontStyle: Tokens.font.icon.medium
         }
-
-        Behavior on opacity { Anim { type: Anim.DefaultEffects } }
     }
 
     Rectangle {
@@ -112,13 +96,12 @@ StyledRect {
         anchors.left: powerAction.right
         anchors.verticalCenter: parent.verticalCenter
         width: 1
-        height: Math.round(parent.height * 0.48)
+        height: Math.round(parent.height * 0.42)
         color: root.activeOnColour
-        opacity: 0.28
+        opacity: 0.32
     }
 
     Behavior on radius { Anim { type: Anim.FastSpatial } }
-    Behavior on opacity { Anim { type: Anim.DefaultEffects } }
 
     onVisibleChanged: if (visible)
         IPad.IPadMode.refresh()
